@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model ESGReport {
+  id                   String   @id @default(cuid())
+  companyName           String
+  reportingYear         Int
+
+  scope1Tco2e            Float
+  scope2Tco2e            Float
+  scope3Tco2e            Float?  // optional
+  energyConsumptionKwh   Float?  // optional
+  notes                 String?  // optional
+
+  // strategy texts (generated)
+  strategyShort          String?
+  strategyNeutral        String?
+  strategyDetailed       String?
+
+  // selection (exactly one)
+  selectedVariant        StrategyVariant?
+
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@index([companyName, reportingYear])
+}
+
+enum StrategyVariant {
+  short
+  neutral
+  detailed
+}
