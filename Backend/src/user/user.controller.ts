@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Controller, Post, Body, Req, Res } from '@nestjs/common';
+import { Controller, Post, Body, Req, Res, Get, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { SignupDto } from './dto/signup.dto';
 import { type Request, type Response } from 'express';
+import { User } from '@prisma/client';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('user')
 export class UserController {
@@ -44,6 +46,30 @@ export class UserController {
     } catch (error) {
       return response.status(400).json({
         message: 'Error logging in user',
+        error: error.message,
+      });
+    }
+  }
+
+  @Get('/me')
+  @UseGuards(AuthGuard('jwt'))
+  async getProfile(@Req() request: Request, @Res() response: Response) {
+    try {
+      const user = (request as Request & { user?: User }).user;
+
+      if (!user) {
+        throw new Error('User not found in request');
+      }
+
+      const result = await this.userService.getProfile(user.id);
+
+      return response.status(200).json({
+        message: 'User profile fetched successfully',
+        data: result,
+      });
+    } catch (error) {
+      return response.status(400).json({
+        message: 'Error fetching user profile',
         error: error.message,
       });
     }
