@@ -12,29 +12,89 @@ datasource db {
   provider = "postgresql"
 }
 
-model ESGReport {
-  id                   String   @id @default(cuid())
-  companyName           String
-  reportingYear         Int
+enum UserRole {
+  ADMIN
+  MEMBER
+}
 
-  scope1Tco2e            Float
-  scope2Tco2e            Float
-  scope3Tco2e            Float?  // optional
-  energyConsumptionKwh   Float?  // optional
-  notes                 String?  // optional
+enum Industry {
+  Technology
+  Finance
+  Healthcare
+  Energy
+  ConsumerGoods
+  Utilities
+  Transportation
+  Agriculture
+  RealEstate
+  Other
+}
 
-  // strategy texts (generated)
-  strategyShort          String?
-  strategyNeutral        String?
-  strategyDetailed       String?
+enum ReportingFramework {
+  GRI
+  TCFD
+  CSRD
+  CDP
+  CUSTOM
+}
 
-  // selection (exactly one)
-  selectedVariant        StrategyVariant?
+model Organization {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  industry    Industry @default(Other)
+  country     String?
+  website     String?
+  description String?
+  reportingFramework   ReportingFramework @default(GRI)
+  users       User[]   @relation("OrganizationUsers")
+  records    ESGRecord[]
 
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  @@index([companyName, reportingYear])
+  @@index([name])
+}
+
+model User {
+  id String @id @default(cuid())
+  name String
+  email String @unique
+  password String
+  role UserRole @default(MEMBER)
+  organization Organization @relation("OrganizationUsers", fields: [organizationId], references: [id])
+  organizationId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+}
+
+model ESGRecord {
+  id             String       @id @default(uuid())
+  reportingYear  Int
+  scope1         Float
+  scope2         Float
+  scope3         Float?
+  energyKwh      Float?
+  notes          String?
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+  strategies     Strategy[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([organizationId, reportingYear])
+}
+
+model Strategy {
+  id        String    @id @default(uuid())
+  type      String
+  content   String
+  selected  Boolean   @default(false)
+  record    ESGRecord @relation(fields: [recordId], references: [id])
+  recordId  String
+  createdAt DateTime  @default(now())
 }
 
 enum StrategyVariant {
