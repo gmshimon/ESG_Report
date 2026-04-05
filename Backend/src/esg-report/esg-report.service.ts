@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
@@ -22,27 +23,44 @@ export class EsgReportService {
     });
   }
 
-  async findAll(organizationId: string) {
-    return await this.prisma.eSGRecord.findMany({
-      where: { organizationId },
-      select: {
-        id: true,
-        reportingYear: true,
-        scope1: true,
-        scope2: true,
-        scope3: true,
-        energyKwh: true,
-        notes: true,
-        createdAt: true,
-        organization: {
-          select: {
-            name: true,
+  async findAll(organizationId: string, page: number = 1, limit: number = 10) {
+    const skip = (page - 1) * limit;
+
+    const [records, total] = await this.prisma.$transaction([
+      this.prisma.eSGRecord.findMany({
+        where: { organizationId },
+        skip,
+        take: limit,
+        select: {
+          id: true,
+          reportingYear: true,
+          scope1: true,
+          scope2: true,
+          scope3: true,
+          energyKwh: true,
+          notes: true,
+          createdAt: true,
+          organization: {
+            select: {
+              name: true,
+            },
           },
+          strategies: true,
         },
-        strategies: true,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.eSGRecord.count({ where: { organizationId } }),
+    ]);
+
+    return {
+      data: records,
+      meta: {
+        total,
+        page,
+        lastPage: Math.ceil(total / limit),
+        limit,
       },
-      orderBy: { createdAt: 'desc' },
-    });
+    };
   }
 
   async findOne(id: string) {
@@ -56,7 +74,7 @@ export class EsgReportService {
   /**
    * Mock strategy generation: deterministic canned texts that reference inputs.
    */
-  async generateStrategy(id: string) {
+  generateStrategy(id: string) {
     //     const report = await this.findOne(id);
     //     const { companyName, reportingYear, scope1Tco2e, scope2Tco2e } = report;
 

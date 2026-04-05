@@ -13,6 +13,7 @@ import {
   Post,
   Put,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { EsgReportService } from './esg-report.service';
 import { CreateEsgReportDto } from './dto/create-esg-report.dto';
@@ -55,11 +56,14 @@ export class EsgReportController {
 
   @Get()
   @UseGuards(AuthGuard('jwt'))
-  async findAll(@Req() request: Request, @Res() response: Response) {
+  async findAll(@Req() request: Request, @Res() response: Response,@Query('page') page: string = '1',
+  @Query('limit') limit: string = '10') {
     try {
       const user = (request as Request & { user?: User }).user;
       const result = await this.esgReportService.findAll(
         user?.organizationId || 'default-org-id',
+        parseInt(page, 10),
+        parseInt(limit, 10),
       );
       return response.status(200).json({
         success: true,
