@@ -1,6 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Controller, Post, Body, Req, Res, Get, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  Res,
+  Get,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { SignupDto } from './dto/signup.dto';
 import { type Request, type Response } from 'express';

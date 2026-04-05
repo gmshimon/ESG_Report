@@ -1,31 +1,32 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsInt, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
 export class CreateEsgReportDto {
-  @IsString()
-  company_name!: string;
-
   @Type(() => Number)
   @IsInt()
-  reporting_year!: number;
+  reportingYear!: number;
 
   @Type(() => Number)
   @IsNumber()
-  scope1_tco2e!: number;
+  @Min(0)
+  scope1!: number;
 
   @Type(() => Number)
   @IsNumber()
-  scope2_tco2e!: number;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  scope3_tco2e?: number;
+  @Min(0)
+  scope2!: number;
 
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
-  energy_consumption_kwh?: number;
+  @Min(0)
+  scope3!: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  energyKwh?: number;
 
   @IsOptional()
   @IsString()

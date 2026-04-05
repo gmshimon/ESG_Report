@@ -10,23 +10,37 @@ import { SelectStrategyVariantDto } from './dto/select-strategy-variant.dto';
 export class EsgReportService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(dto: CreateEsgReportDto) {
-    // return this.prisma.eSGRecord.create({
-    //   data: {
-    //     companyName: dto.company_name,
-    //     reportingYear: dto.reporting_year,
-    //     scope1Tco2e: dto.scope1_tco2e,
-    //     scope2Tco2e: dto.scope2_tco2e,
-    //     scope3Tco2e: dto.scope3_tco2e,
-    //     energyConsumptionKwh: dto.energy_consumption_kwh,
-    //     notes: dto.notes,
-    //   },
-    // });
-    return dto;
+  async create({
+    dto,
+    organizationId,
+  }: {
+    dto: CreateEsgReportDto;
+    organizationId: string;
+  }) {
+    return await this.prisma.eSGRecord.create({
+      data: { ...dto, organizationId },
+    });
   }
 
-  findAll() {
-    return this.prisma.eSGRecord.findMany({
+  async findAll(organizationId: string) {
+    return await this.prisma.eSGRecord.findMany({
+      where: { organizationId },
+      select: {
+        id: true,
+        reportingYear: true,
+        scope1: true,
+        scope2: true,
+        scope3: true,
+        energyKwh: true,
+        notes: true,
+        createdAt: true,
+        organization: {
+          select: {
+            name: true,
+          },
+        },
+        strategies: true,
+      },
       orderBy: { createdAt: 'desc' },
     });
   }
