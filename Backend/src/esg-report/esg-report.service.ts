@@ -11,6 +11,22 @@ import { SelectStrategyVariantDto } from './dto/select-strategy-variant.dto';
 export class EsgReportService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private esgRecordsSelect = {
+    id: true,
+    reportingYear: true,
+    scope1: true,
+    scope2: true,
+    scope3: true,
+    energyKwh: true,
+    notes: true,
+    createdAt: true,
+    organization: {
+      select: {
+        name: true,
+      },
+    },
+    strategies: true,
+  };
   async create({
     dto,
     organizationId,
@@ -31,22 +47,7 @@ export class EsgReportService {
         where: { organizationId },
         skip,
         take: limit,
-        select: {
-          id: true,
-          reportingYear: true,
-          scope1: true,
-          scope2: true,
-          scope3: true,
-          energyKwh: true,
-          notes: true,
-          createdAt: true,
-          organization: {
-            select: {
-              name: true,
-            },
-          },
-          strategies: true,
-        },
+        select: this.esgRecordsSelect,
         orderBy: { createdAt: 'desc' },
       }),
       this.prisma.eSGRecord.count({ where: { organizationId } }),
@@ -63,8 +64,11 @@ export class EsgReportService {
     };
   }
 
-  async findOne(id: string) {
-    const report = await this.prisma.eSGRecord.findUnique({ where: { id } });
+  async findOne(id: string, organizationId: string) {
+    const report = await this.prisma.eSGRecord.findUnique({
+      where: { id, organizationId },
+      select: this.esgRecordsSelect,
+    });
     if (!report) {
       throw new NotFoundException('ESG report not found');
     }
@@ -102,7 +106,7 @@ export class EsgReportService {
 
   async selectVariant(id: string, dto: SelectStrategyVariantDto) {
     // Ensure report exists
-    await this.findOne(id);
+    // await this.findOne(id);
     // return this.prisma.eSGRecord.update({
     //   where: { id },
     //   data: { selectedVariant: dto.variant },

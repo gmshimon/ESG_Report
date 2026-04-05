@@ -2,7 +2,6 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   Body,
   Controller,
@@ -18,7 +17,7 @@ import {
 import { EsgReportService } from './esg-report.service';
 import { CreateEsgReportDto } from './dto/create-esg-report.dto';
 import { SelectStrategyVariantDto } from './dto/select-strategy-variant.dto';
-import { type Request, type Response } from 'express';
+import { response, type Request, type Response } from 'express';
 import { AuthGuard } from '@nestjs/passport/dist/auth.guard';
 import { User } from '@prisma/client';
 
@@ -59,6 +58,9 @@ export class EsgReportController {
   async findAll(@Req() request: Request, @Res() response: Response,@Query('page') page: string = '1',
   @Query('limit') limit: string = '10') {
     try {
+
+      // Todo: Implement the redis caching layer
+      // Todo: Implement the pagination and filtering logic in the service layer
       const user = (request as Request & { user?: User }).user;
       const result = await this.esgReportService.findAll(
         user?.organizationId || 'default-org-id',
@@ -80,8 +82,22 @@ export class EsgReportController {
 
   @Get(':id')
   @UseGuards(AuthGuard('jwt'))
-  findOne(@Param('id') id: string) {
-    return this.esgReportService.findOne(id);
+  async findOne(@Req() request: Request, @Res() response: Response,@Param('id') id: string) {
+    try {
+       const user = (request as Request & { user?: User }).user;
+      const result =  await this.esgReportService.findOne(id, user?.organizationId || 'default-org-id');
+    return response.status(200).json({
+      success: true,
+      data: result,
+    });
+    } catch (error) {
+      response.status(500).json({
+        success: false,
+        message: 'Error fetching ESG report',
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+
   }
 
   @Post(':id/strategies')
