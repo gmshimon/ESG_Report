@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { createReport } from "@/lib/emissionsSlice";
+import { createReport } from "@/lib/Feature/emissionsSlice";
 
 type FormState = {
   company_name: string;

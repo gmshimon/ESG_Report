@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { fetchReports } from "@/lib/emissionsSlice";
+import { fetchReports } from "@/lib/Feature/emissionsSlice";
 import { Button } from "@/components/ui/button";
 
 export function EmissionsTable() {

@@ -1,5 +1,5 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import emissionsReducer from "./emissionsSlice";
+import emissionsReducer from "./Feature/emissionsSlice";
 
 const rootReducer = combineReducers({
   emissions: emissionsReducer,

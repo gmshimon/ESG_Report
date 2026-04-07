@@ -3,7 +3,7 @@ import {
   createSlice,
   type PayloadAction,
 } from "@reduxjs/toolkit";
-import api from "./axios";
+import api from "../Axios/axios";
 
 export type EmissionEntry = {
   id: string;

@@ -8,7 +8,7 @@ import {
   fetchReportById,
   generateStrategies,
   selectStrategy,
-} from "@/lib/emissionsSlice";
+} from "@/lib/Feature/emissionsSlice";
 import { Button } from "@/components/ui/button";
 import { DownloadReportButton } from "@/components/download-report-button";
 

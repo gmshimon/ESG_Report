@@ -23,7 +23,7 @@ enum Industry {
   RealEstate
   Other
 }
-
+ p
 enum ReportingFramework {
   GRI
   TCFD

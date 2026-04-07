@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import type { EmissionEntry } from "@/lib/emissionsSlice";
+import type { EmissionEntry } from "@/lib/Feature/emissionsSlice";
 
 type Props = {
   entry: EmissionEntry;
