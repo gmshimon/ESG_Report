@@ -2,6 +2,17 @@ import axiosSecure from "@/lib/Axios/axiosSecure";
 import type { LoginInfo, SignupInfo } from "./auth.types";
 import api from '../../Axios/axios'
 
+/*
+✅ import type
+    Only used for types
+    Removed completely during build
+    No runtime impact
+❌ normal import
+    Treated as real JavaScript import
+    Included in final bundle (even if not needed)
+    Can cause circular dependency issues
+*/
+
 export const signupRequest = async (data: SignupInfo) =>{
     const response = await api.post('/auth/signup', data)
     return response.data.data

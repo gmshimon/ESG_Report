@@ -1,8 +1,10 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import emissionsReducer from "./Feature/emissionsSlice";
+import emissionsReducer from "./Feature/Emission/emission.slice";
+import authReducer from "./Feature/Auth/auth.slice";
 
 const rootReducer = combineReducers({
   emissions: emissionsReducer,
+  auth: authReducer,
 });
 
 const store = configureStore({

@@ -17,6 +17,14 @@ const getErrorMessage = (error: unknown): string => {
   return 'Something went wrong'
 }
 
+/*
+  createAsyncThunk<
+  ReturnedData,
+  InputArgument,
+  ThunkConfig
+>
+*/
+
 export const createUser = createAsyncThunk<
   User,
   SignupInfo,
