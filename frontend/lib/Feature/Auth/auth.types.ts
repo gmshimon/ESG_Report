@@ -10,6 +10,7 @@ export type SignupInfo = {
   name: string
   email: string
   password: string
+  confirmPassword: string
   organization: {
     name: string
     slug: string

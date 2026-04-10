@@ -14,16 +14,16 @@ import api from '../../Axios/axios'
 */
 
 export const signupRequest = async (data: SignupInfo) =>{
-    const response = await api.post('/auth/signup', data)
+    const response = await api.post('/user/signup', data)
     return response.data.data
 }
 
 export const loginRequest = async (data: LoginInfo) =>{
-    const response = await api.post('/auth/login', data)
+    const response = await api.post('/user/login', data)
     return response.data.data
 }
 
 export const fetchRequest = async()=>{
-    const response = await axiosSecure.get('/auth/me')
+    const response = await axiosSecure.get('/user/me')
     return response.data.data
 }

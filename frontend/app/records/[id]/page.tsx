@@ -4,11 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import {
-  fetchReportById,
-  generateStrategies,
-  selectStrategy,
-} from "@/lib/Feature/emissionsSlice";
+
 import { Button } from "@/components/ui/button";
 import { DownloadReportButton } from "@/components/download-report-button";
 
@@ -38,11 +34,11 @@ export default function RecordPage() {
 
   const [localError, setLocalError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (id && !entry && fetchOneStatus !== "loading") {
-      void dispatch(fetchReportById(id));
-    }
-  }, [dispatch, id, entry, fetchOneStatus]);
+  // useEffect(() => {
+  //   if (id && !entry && fetchOneStatus !== "loading") {
+  //     void dispatch(fetchReportById(id));
+  //   }
+  // }, [dispatch, id, entry, fetchOneStatus]);
 
   const series = useMemo(() => {
     if (!entry) return [];

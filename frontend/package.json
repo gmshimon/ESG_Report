@@ -19,6 +19,8 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-redux": "^9.2.0",
+    "react-toastify": "^11.0.5",
+    "skeleton-ui-loader": "^0.1.12",
     "tailwind-merge": "^3.4.1"
   },
   "devDependencies": {

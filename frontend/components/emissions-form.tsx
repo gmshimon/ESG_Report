@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { createReport } from "@/lib/Feature/emissionsSlice";
+// import { createReport } from "@/lib/Feature/emissionsSlice";
 
 type FormState = {
   company_name: string;
@@ -83,17 +83,17 @@ export function EmissionsForm() {
     }
 
     try {
-      await dispatch(
-        createReport({
-          company_name: form.company_name.trim(),
-          reporting_year: year,
-          scope1_tco2e: scope1,
-          scope2_tco2e: scope2,
-          scope3_tco2e: scope3,
-          energy_consumption_kwh: energy,
-          notes: form.notes.trim() || undefined,
-        })
-      ).unwrap();
+      // await dispatch(
+      //   createReport({
+      //     company_name: form.company_name.trim(),
+      //     reporting_year: year,
+      //     scope1_tco2e: scope1,
+      //     scope2_tco2e: scope2,
+      //     scope3_tco2e: scope3,
+      //     energy_consumption_kwh: energy,
+      //     notes: form.notes.trim() || undefined,
+      //   })
+      // ).unwrap();
 
       setForm(initialForm);
     } catch (err) {

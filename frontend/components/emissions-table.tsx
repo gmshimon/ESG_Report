@@ -1,21 +1,12 @@
 "use client";
-
-import { useEffect } from "react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { fetchReports } from "@/lib/Feature/emissionsSlice";
 import { Button } from "@/components/ui/button";
 
 export function EmissionsTable() {
   const entries = useAppSelector((state) => state.emissions.entries);
-  const fetchStatus = useAppSelector((state) => state.emissions.fetchStatus);
-  const fetchError = useAppSelector((state) => state.emissions.fetchError);
+
   const dispatch = useAppDispatch();
-  useEffect(() => {
-    if (fetchStatus === "idle") {
-      dispatch(fetchReports());
-    }
-  }, [dispatch, fetchStatus]);
   return (
     <section className="lg:col-span-2 space-y-4">
       <div className="flex items-center justify-between">
@@ -27,11 +18,11 @@ export function EmissionsTable() {
           </p>
         </div>
         <span className="text-sm rounded-full bg-emerald-100 text-emerald-800 px-3 py-1 font-medium">
-          {entries.length} record{entries.length === 1 ? "" : "s"}
+          {entries?.length} record{entries?.length === 1 ? "" : "s"}
         </span>
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+      {/* <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
         {fetchStatus === "loading" ? (
           <div className="p-8 text-center text-slate-500">Loading reports…</div>
         ) : fetchStatus === "failed" ? (
@@ -107,7 +98,7 @@ export function EmissionsTable() {
             </table>
           </div>
         )}
-      </div>
+      </div> */}
     </section>
   );
 }

@@ -1,8 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useDispatch } from "react-redux";
+import { useAppSelector } from "@/lib/hooks";
+import { Spinner } from "@/components/Spinner/Spinner";
+import type { SignupInfo } from "@/lib/Feature/Auth/auth.types";
+import { showErrorToast, showSuccessToast } from "@/lib/toastUtils";
+import { userSliceReset } from "@/lib/Feature/Auth/auth.slice";
+import { createUser } from "@/lib/Feature/Auth/auth.thunk";
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import { AppDispatch } from "@/lib/store";
 
 type SignupForm = {
   name: string;
@@ -31,16 +41,40 @@ const initialForm: SignupForm = {
 };
 
 export default function SignupPage() {
+  const {
+    isCreateUserLoading,
+    isCreateUserError,
+    isCreateUserSuccess,
+    errorMessage,
+  } = useAppSelector((state) => state.auth);
+
   const [form, setForm] = useState<SignupForm>(initialForm);
   const [error, setError] = useState<string | null>(null);
-  const [submitted, setSubmitted] = useState(false);
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    if (isCreateUserError) {
+
+      showErrorToast(
+        errorMessage || "Failed to create account. Please try again.",
+      );
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setForm(initialForm);     
+    setError(null);  
+      dispatch(userSliceReset());
+    }
+    if (isCreateUserSuccess) {
+      showSuccessToast("Account created successfully! You can now log in.");
+      dispatch(userSliceReset());
+    }
+  }, [isCreateUserError, errorMessage, dispatch, isCreateUserSuccess]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-    setSubmitted(false);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -53,7 +87,7 @@ export default function SignupPage() {
     }
 
     // Build payload in the shape required by the backend.
-    const payload = {
+    const payload: SignupInfo = {
       name: form.name.trim(),
       email: form.email.trim(),
       password: form.password,
@@ -67,15 +101,12 @@ export default function SignupPage() {
         description: form.description.trim(),
       },
     };
-
-    // TODO: replace with actual POST (e.g., axios/ fetch) to your signup endpoint.
-    // await axios.post("/api/signup", payload);
-    console.log("Signup payload", payload);
-    setSubmitted(true);
+    dispatch(createUser(payload));
   };
 
   return (
     <main className="min-h-screen  text-slate-900">
+      <ToastContainer/>
       <div className="mx-auto flex min-h-screen max-w-6xl flex-col justify-center gap-10 px-6 py-4 lg:flex-row lg:items-center lg:gap-16">
         <section className="space-y-4 lg:max-w-md">
           <p className="text-xs uppercase tracking-[0.2em] text-emerald-700 font-semibold">
@@ -85,7 +116,8 @@ export default function SignupPage() {
             Create your account and workspace.
           </h1>
           <p className="text-slate-600">
-            One step signup captures both your user credentials and the organization profile so the dashboard is ready on first login.
+            One step signup captures both your user credentials and the
+            organization profile so the dashboard is ready on first login.
           </p>
           <ul className="space-y-2 text-slate-700">
             <li className="flex items-start gap-2 text-sm">
@@ -117,7 +149,7 @@ export default function SignupPage() {
               </h2>
             </header>
 
-            {(error || submitted) && (
+            {(error) && (
               <div
                 className={`mt-4 rounded-lg border px-4 py-3 text-sm ${
                   error
@@ -125,7 +157,8 @@ export default function SignupPage() {
                     : "border-emerald-200 bg-emerald-50 text-emerald-800"
                 }`}
               >
-                {error ?? "Signup payload prepared. Hook up your API to proceed."}
+                {error ??
+                  "Signup payload prepared. Hook up your API to proceed."}
               </div>
             )}
 
@@ -265,10 +298,11 @@ export default function SignupPage() {
               </div>
 
               <Button
+                disabled={isCreateUserLoading}
                 type="submit"
-                className="h-11 w-full bg-emerald-600 text-white hover:bg-emerald-700"
+                className="h-11 w-full bg-emerald-600 text-white hover:bg-emerald-700 cursor-pointer"
               >
-                Create account
+                {isCreateUserLoading ? <Spinner /> : "Create account"}
               </Button>
             </form>
           </div>
