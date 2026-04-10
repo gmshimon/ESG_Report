@@ -44,7 +44,16 @@ export const loginUser = createAsyncThunk<
   { rejectValue: string }
 >("auth/loginUser", async (data, thunkAPI) => {
   try {
-    return await loginRequest(data);
+    const response = await loginRequest(data)
+    const tokenExpiration = new Date().getTime() + 10 * 60 * 60 * 1000 // 3 hours
+    localStorage.setItem(
+      'userToken',
+      JSON.stringify({
+        access_token: response.token,
+        expiration: tokenExpiration
+      })
+    )
+    return response.user
   } catch (error) {
     return thunkAPI.rejectWithValue(getErrorMessage(error));
   }

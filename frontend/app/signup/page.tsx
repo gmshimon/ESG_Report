@@ -10,8 +10,7 @@ import type { SignupInfo } from "@/lib/Feature/Auth/auth.types";
 import { showErrorToast, showSuccessToast } from "@/lib/toastUtils";
 import { userSliceReset } from "@/lib/Feature/Auth/auth.slice";
 import { createUser } from "@/lib/Feature/Auth/auth.thunk";
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import { ToastContainer } from "react-toastify";
 import { AppDispatch } from "@/lib/store";
 
 type SignupForm = {
@@ -55,13 +54,12 @@ export default function SignupPage() {
 
   useEffect(() => {
     if (isCreateUserError) {
-
       showErrorToast(
         errorMessage || "Failed to create account. Please try again.",
       );
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setForm(initialForm);     
-    setError(null);  
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setForm(initialForm);
+      setError(null);
       dispatch(userSliceReset());
     }
     if (isCreateUserSuccess) {
@@ -106,7 +104,7 @@ export default function SignupPage() {
 
   return (
     <main className="min-h-screen  text-slate-900">
-      <ToastContainer/>
+      <ToastContainer />
       <div className="mx-auto flex min-h-screen max-w-6xl flex-col justify-center gap-10 px-6 py-4 lg:flex-row lg:items-center lg:gap-16">
         <section className="space-y-4 lg:max-w-md">
           <p className="text-xs uppercase tracking-[0.2em] text-emerald-700 font-semibold">
@@ -149,7 +147,7 @@ export default function SignupPage() {
               </h2>
             </header>
 
-            {(error) && (
+            {error && (
               <div
                 className={`mt-4 rounded-lg border px-4 py-3 text-sm ${
                   error
