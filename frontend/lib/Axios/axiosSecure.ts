@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const prod = 'https://rick-and-morty-full-stack-app.vercel.app/api/'
-const local = 'http://localhost:3002/'
+const local = 'http://localhost:3001/'
 
 // Create an Axios instance
 const axiosSecure = axios.create({

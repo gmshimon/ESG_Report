@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import axios from 'axios'
 import { CreateESGInput, ESGRecords } from './emission.types'
-import { createESGRequest } from './emission.api'
+import { createESGRequest, fetchESGReportsRequest } from './emission.api'
+import axios from 'axios'
 
 const getErrorMessage = (error: unknown): string => {
   if (axios.isAxiosError(error)) {
@@ -36,8 +36,8 @@ export const fetchESGRecords = createAsyncThunk<
     { rejectValue: string }
 >('emissions/fetchESGRecords', async (_, thunkAPI) => {
     try {
-        const response = await axios.get('/api/esg-reports')
-        return response.data.data
+        const response = await fetchESGReportsRequest()
+        return response.data
     } catch (error) {
         return thunkAPI.rejectWithValue(getErrorMessage(error))
     }

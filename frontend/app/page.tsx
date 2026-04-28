@@ -1,5 +1,6 @@
-import { EmissionsForm } from "@/components/emissions-form";
-import { EmissionsTable } from "@/components/emissions-table";
+
+import { EmissionsForm } from "@/components/EmissionsForm/EmissionsForm";
+import { EmissionsTable } from "@/components/EmissionsTable/EmissionsTable";
 
 export default function Home() {
   // Server component wrapper that renders client-side dashboard pieces.

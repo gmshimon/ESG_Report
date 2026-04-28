@@ -1,12 +1,12 @@
 "use client";
 import Link from "next/link";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { Button } from "@/components/ui/button";
+import { useAppSelector } from "@/lib/hooks";
+import useEmission from "@/hooks/useEmission";
 
 export function EmissionsTable() {
   const entries = useAppSelector((state) => state.emissions.entries);
-
-  const dispatch = useAppDispatch();
+useEmission()
+console.log(entries)
   return (
     <section className="lg:col-span-2 space-y-4">
       <div className="flex items-center justify-between">

@@ -2,7 +2,7 @@ import type { User } from "../Auth/auth.types";
 
 export interface ESGRecords {
   id: string;
-  reportingYear: number;
+  reportingYear: string;
   scope1: number;
   scope2: number;
   scope3?: number;
@@ -13,9 +13,7 @@ export interface ESGRecords {
   organization: Pick<Organization, "id" | "name" | "slug">;
 };
 
-export interface CreateESGInput extends Omit<ESGRecords, 'id' | 'createdAt' | 'updatedAt' | 'organization'> {
-  organizationId: string;
-}
+export type CreateESGInput = Omit<ESGRecords, 'id' | 'createdAt' | 'updatedAt' | 'organization'>
 
 export interface Organization {
     id: string;

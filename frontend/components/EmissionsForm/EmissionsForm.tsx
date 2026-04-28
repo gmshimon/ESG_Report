@@ -2,38 +2,29 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { useAppDispatch } from "@/lib/hooks";
+import type { CreateESGInput } from "@/lib/Feature/Emission/emission.types";
+import useEmission from "@/hooks/useEmission";
 // import { createReport } from "@/lib/Feature/emissionsSlice";
 
-type FormState = {
-  company_name: string;
-  reporting_year: string;
-  scope1_tco2e: string;
-  scope2_tco2e: string;
-  scope3_tco2e: string;
-  energy_consumption_kwh: string;
-  notes: string;
-};
-
-const initialForm: FormState = {
-  company_name: "",
-  reporting_year: new Date().getFullYear().toString(),
-  scope1_tco2e: "",
-  scope2_tco2e: "",
-  scope3_tco2e: "",
-  energy_consumption_kwh: "",
+const initialForm: CreateESGInput = {
+  reportingYear: new Date().getFullYear().toString(),
+  scope1: 0,
+  scope2: 0,
+  scope3: 0,
+  energyKwh: 0,
   notes: "",
 };
 
 export function EmissionsForm() {
-  const dispatch = useAppDispatch();
-  const saveStatus = useAppSelector((state) => state.emissions.saveStatus);
-  const saveError = useAppSelector((state) => state.emissions.saveError);
-  const [form, setForm] = useState<FormState>(initialForm);
+const {
+  createESGData
+} = useEmission()
+  const [form, setForm] = useState<CreateESGInput>(initialForm);
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -43,14 +34,10 @@ export function EmissionsForm() {
     e.preventDefault();
     setError(null);
 
-    if (!form.company_name.trim()) {
-      setError("Company name is required.");
-      return;
-    }
 
-    const year = Number(form.reporting_year);
-    const scope1 = Number(form.scope1_tco2e);
-    const scope2 = Number(form.scope2_tco2e);
+    const year = Number(form.reportingYear);
+    const scope1 = Number(form.scope1);
+    const scope2 = Number(form.scope2);
 
     if (!year || Number.isNaN(year)) {
       setError("Reporting year must be a number.");
@@ -67,9 +54,9 @@ export function EmissionsForm() {
       return;
     }
 
-    const scope3 = form.scope3_tco2e ? Number(form.scope3_tco2e) : undefined;
-    const energy = form.energy_consumption_kwh
-      ? Number(form.energy_consumption_kwh)
+    const scope3 = form.scope3 !== undefined ? Number(form.scope3) : undefined;
+    const energy = form.energyKwh !== undefined
+      ? Number(form.energyKwh)
       : undefined;
 
     if (scope3 !== undefined && scope3 < 0) {
@@ -81,26 +68,7 @@ export function EmissionsForm() {
       setError("Energy consumption must be zero or positive.");
       return;
     }
-
-    try {
-      // await dispatch(
-      //   createReport({
-      //     company_name: form.company_name.trim(),
-      //     reporting_year: year,
-      //     scope1_tco2e: scope1,
-      //     scope2_tco2e: scope2,
-      //     scope3_tco2e: scope3,
-      //     energy_consumption_kwh: energy,
-      //     notes: form.notes.trim() || undefined,
-      //   })
-      // ).unwrap();
-
-      setForm(initialForm);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to save entry."
-      );
-    }
+    createESGData(form)
   };
 
   return (
@@ -112,14 +80,14 @@ export function EmissionsForm() {
         </p>
       </div>
 
-      {(error || saveError) && (
+      {error && (
         <div className="rounded-md bg-red-50 border border-red-200 text-red-700 px-3 py-2 text-sm">
-          {error ?? saveError}
+          {/* {error ?? saveError} */}
         </div>
       )}
 
       <form className="space-y-3" onSubmit={handleSubmit}>
-        <div className="space-y-1">
+        {/* <div className="space-y-1">
           <label
             className="text-sm font-medium text-slate-800"
             htmlFor="company_name"
@@ -135,7 +103,7 @@ export function EmissionsForm() {
             placeholder="Acme Corp"
             required
           />
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
@@ -147,9 +115,9 @@ export function EmissionsForm() {
             </label>
             <input
               id="reporting_year"
-              name="reporting_year"
+              name="reportingYear"
               type="number"
-              value={form.reporting_year}
+              value={form.reportingYear}
               onChange={handleChange}
               className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-inner focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
               min={1900}
@@ -166,15 +134,15 @@ export function EmissionsForm() {
             </label>
             <input
               id="scope1_tco2e"
-              name="scope1_tco2e"
-                    type="number"
-                    step="0.01"
-                    min={0}
-                    value={form.scope1_tco2e}
-                    onChange={handleChange}
-                    className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-inner focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
-                    required
-                  />
+              name="scope1"
+              type="number"
+              step="0.01"
+              min={0}
+              value={form.scope1}
+              onChange={handleChange}
+              className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-inner focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+              required
+            />
           </div>
         </div>
 
@@ -188,15 +156,15 @@ export function EmissionsForm() {
             </label>
             <input
               id="scope2_tco2e"
-              name="scope2_tco2e"
-                    type="number"
-                    step="0.01"
-                    min={0}
-                    value={form.scope2_tco2e}
-                    onChange={handleChange}
-                    className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-inner focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
-                    required
-                  />
+              name="scope2"
+              type="number"
+              step="0.01"
+              min={0}
+              value={form.scope2}
+              onChange={handleChange}
+              className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-inner focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+              required
+            />
           </div>
           <div className="space-y-1">
             <label
@@ -207,14 +175,14 @@ export function EmissionsForm() {
             </label>
             <input
               id="scope3_tco2e"
-              name="scope3_tco2e"
-                    type="number"
-                    step="0.01"
-                    min={0}
-                    value={form.scope3_tco2e}
-                    onChange={handleChange}
-                    className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-inner focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
-                  />
+              name="scope3"
+              type="number"
+              step="0.01"
+              min={0}
+              value={form.scope3}
+              onChange={handleChange}
+              className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-inner focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+            />
           </div>
         </div>
 
@@ -227,14 +195,14 @@ export function EmissionsForm() {
           </label>
           <input
             id="energy_consumption_kwh"
-            name="energy_consumption_kwh"
-                    type="number"
-                    step="0.01"
-                    min={0}
-                    value={form.energy_consumption_kwh}
-                    onChange={handleChange}
-                    className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-inner focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
-                  />
+            name="energyKwh"
+            type="number"
+            step="0.01"
+            min={0}
+            value={form.energyKwh}
+            onChange={handleChange}
+            className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-inner focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+          />
         </div>
 
         <div className="space-y-1">
@@ -254,10 +222,10 @@ export function EmissionsForm() {
 
         <Button
           type="submit"
-          disabled={saveStatus === "loading"}
-          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-60"
+          className="w-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-60"
         >
-          {saveStatus === "loading" ? "Saving..." : "Save entry"}
+          Save
+          {/* {saveStatus === "loading" ? "Saving..." : "Save entry"} */}
         </Button>
       </form>
     </div>
